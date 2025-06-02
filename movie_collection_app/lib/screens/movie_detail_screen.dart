@@ -32,7 +32,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Future<void> _loadFavoriteStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final favoriteIds = prefs.getStringList('favoriteIds')?.map(int.parse).toList() ?? [];
+    final favoriteIds =
+        prefs.getStringList('favoriteIds')?.map(int.parse).toList() ?? [];
     setState(() {
       isFavorite = favoriteIds.contains(widget.movieId);
     });
@@ -40,13 +41,17 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   Future<void> _toggleFavorite() async {
     final prefs = await SharedPreferences.getInstance();
-    final favoriteIds = prefs.getStringList('favoriteIds')?.map(int.parse).toList() ?? [];
+    final favoriteIds =
+        prefs.getStringList('favoriteIds')?.map(int.parse).toList() ?? [];
     if (isFavorite) {
       favoriteIds.remove(widget.movieId);
     } else {
       favoriteIds.add(widget.movieId);
     }
-    await prefs.setStringList('favoriteIds', favoriteIds.map((id) => id.toString()).toList());
+    await prefs.setStringList(
+      'favoriteIds',
+      favoriteIds.map((id) => id.toString()).toList(),
+    );
     setState(() {
       isFavorite = !isFavorite;
     });
@@ -80,10 +85,15 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)),
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
             );
           }
-          return const Center(child: CircularProgressIndicator(color: Colors.white));
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          );
         },
       ),
     );
@@ -92,16 +102,21 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   Widget _buildMovieImage(String? imageUrl) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: imageUrl != null
-          ? Image.network(
-              imageUrl,
-              height: 250,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.broken_image, size: 200, color: Colors.white);
-              },
-            )
-          : const Icon(Icons.movie, size: 200, color: Colors.white),
+      child:
+          imageUrl != null
+              ? Image.network(
+                imageUrl,
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.broken_image,
+                    size: 200,
+                    color: Colors.white,
+                  );
+                },
+              )
+              : const Icon(Icons.movie, size: 200, color: Colors.white),
     );
   }
 
@@ -111,7 +126,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       children: [
         Text(
           movie.title,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10),
@@ -150,8 +169,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditMovieScreen(movie: movie)),
-                ).then((_) => setState(() => futureMovie = _loadMovie()));
+                  MaterialPageRoute(
+                    builder: (context) => EditMovieScreen(movie: movie),
+                  ),
+                ).then((_) async {
+                  final newFuture =
+                      _loadMovie(); // หรือ await แล้ว Future.value() ก็ได้
+                  setState(() {
+                    futureMovie = newFuture;
+                  });
+                });
               },
               icon: const Icon(Icons.edit, color: Colors.black),
               label: const Text('Edit', style: TextStyle(color: Colors.black)),
@@ -159,23 +186,30 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
             ElevatedButton.icon(
               onPressed: () async {
-                bool confirm = await showDialog(
+                bool confirm =
+                    await showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Confirm Delete'),
-                        content: const Text('Are you sure you want to delete this movie?',
-                            style: TextStyle(color: Colors.red)),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel'),
+                      builder:
+                          (context) => AlertDialog(
+                            title: const Text('Confirm Delete'),
+                            content: const Text(
+                              'Are you sure you want to delete this movie?',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
                           ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                          ),
-                        ],
-                      ),
                     ) ??
                     false;
 
@@ -186,7 +220,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 }
               },
               icon: const Icon(Icons.delete, color: Colors.white),
-              label: const Text('Delete', style: TextStyle(color: Colors.white)),
+              label: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             ),
             ElevatedButton.icon(

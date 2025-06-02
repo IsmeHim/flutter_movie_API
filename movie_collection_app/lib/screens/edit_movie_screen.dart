@@ -96,8 +96,10 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
                             imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
                           );
                           await ApiService().updateMovie(updatedMovie);
-                          // ignore: use_build_context_synchronously
-                          Navigator.pop(context);
+                          if (mounted) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
